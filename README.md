@@ -171,6 +171,4 @@ BlinkPipe/
 - **~8,000 orders/day** with realistic peak-hour & weekend patterns
 - **Customer tiers** — Gold, Silver, Bronze with order behavior variation
 
-## Resume Bullet
 
-> Built **BlinkPipe**, an end-to-end data engineering platform processing 8,000+ daily quick-commerce orders through a 5-layer medallion architecture: MinIO data lake → Apache Airflow ETL → DuckDB OLAP warehouse → dbt star schema (3 dims, 2 facts, 3 marts) → Metabase dashboards. Includes automated data quality checks and full Docker Compose deployment.
