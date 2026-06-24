@@ -5,7 +5,7 @@ x-airflow-common: &airflow-common
   environment:
     AIRFLOW__CORE__EXECUTOR: LocalExecutor
     AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres/${POSTGRES_DB}
-    AIRFLOW__CORE__FERNET_KEY: 'ZmDfcTF7_60GrrY167zsiPd67pEvs0aGOv2oasOM1Pg='
+    AIRFLOW__CORE__FERNET_KEY: ${AIRFLOW_FERNET_KEY}
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
     AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth,airflow.api.auth.backend.session'
@@ -71,12 +71,13 @@ services:
 
   minio-init:
     image: minio/mc:latest
+    env_file: .env
     depends_on:
       minio:
         condition: service_healthy
     entrypoint: >
       /bin/sh -c "
-        /usr/bin/mc alias set myminio http://minio:9000 minioadmin minioadmin &&
+        /usr/bin/mc alias set myminio http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} &&
         /usr/bin/mc mb --ignore-existing myminio/raw &&
         /usr/bin/mc mb --ignore-existing myminio/processed &&
         /usr/bin/mc mb --ignore-existing myminio/curated &&
@@ -99,7 +100,7 @@ services:
           --role Admin --email admin@blinkpipe.io --password admin || true
         airflow connections add 'minio_default' \
           --conn-type 's3' \
-          --conn-extra '{"endpoint_url":"http://minio:9000","aws_access_key_id":"minioadmin","aws_secret_access_key":"minioadmin"}' || true
+          --conn-extra "{\"endpoint_url\":\"${MINIO_ENDPOINT}\",\"aws_access_key_id\":\"${MINIO_ROOT_USER}\",\"aws_secret_access_key\":\"${MINIO_ROOT_PASSWORD}\"}" || true
         echo "Airflow init complete"
     restart: on-failure
 
