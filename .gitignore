@@ -1,0 +1,29 @@
+# Environment & secrets
+.env
+*.env
+
+# Airflow logs & runtime
+logs/
+data/
+plugins/__pycache__/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# dbt
+dbt/blinkit_dw/target/
+dbt/blinkit_dw/dbt_packages/
+dbt/blinkit_dw/logs/
+
+# Docker volumes (auto-generated)
+postgres-db-volume/
+minio-data/
+metabase-db/
+
+# OS
+.DS_Store
+Thumbs.db

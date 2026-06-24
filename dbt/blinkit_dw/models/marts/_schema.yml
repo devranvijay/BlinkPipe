@@ -1,0 +1,64 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: Date dimension spanning 2023–2026
+    columns:
+      - name: date_key
+        tests: [not_null, unique]
+      - name: date_day
+        tests: [not_null, unique]
+
+  - name: dim_customers
+    description: Customer dimension with segmentation
+    columns:
+      - name: customer_key
+        tests: [not_null, unique]
+      - name: customer_id
+        tests: [not_null, unique]
+
+  - name: dim_products
+    description: Product dimension with price bands
+    columns:
+      - name: product_key
+        tests: [not_null, unique]
+
+  - name: dim_stores
+    description: Dark store dimension with geo data
+    columns:
+      - name: store_key
+        tests: [not_null, unique]
+
+  - name: fct_orders
+    description: Grain = one row per order
+    columns:
+      - name: order_id
+        tests: [not_null, unique]
+      - name: total_amount
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: ">= 0"
+      - name: status
+        tests:
+          - accepted_values:
+              values: [delivered, cancelled, returned]
+
+  - name: fct_order_items
+    description: Grain = one row per order line item
+    columns:
+      - name: order_item_id
+        tests: [not_null, unique]
+      - name: qty
+        tests:
+          - dbt_utils.expression_is_true:
+              expression: "> 0"
+
+  - name: mart_daily_sales
+    description: Pre-aggregated daily sales by city — powers executive dashboard
+
+  - name: mart_store_performance
+    description: Store-level daily KPIs — powers ops dashboard
+
+  - name: mart_product_rankings
+    description: Monthly product rankings by category — powers category dashboard

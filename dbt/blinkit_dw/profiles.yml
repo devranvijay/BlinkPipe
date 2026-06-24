@@ -1,0 +1,12 @@
+blinkit_dw:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH', '/opt/airflow/data/blinkit.db') }}"
+      threads: 4
+
+    local:
+      type: duckdb
+      path: "../../data/blinkit.db"
+      threads: 4
